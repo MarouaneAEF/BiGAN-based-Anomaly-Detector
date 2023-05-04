@@ -101,7 +101,7 @@ class Trainer:
                 loss_ge = -torch.mean(out_fake) + torch.mean(out_true)
             else:
                 loss_d = citerion(out_true.view(out_true.size(0),1), y_true) + citerion(out_fake.view(out_fake.size(0),1), y_fake)
-                loss_ge = citerion(out_fake.view(out_fake.size(0),1), y_true) #+ citerion(out_true.view(out_true.size(0),1), y_fake)
+                loss_ge = citerion(out_fake.view(out_fake.size(0),1), y_true) + citerion(out_true.view(out_true.size(0),1), y_true)
 
             # Computing gradient and backpropagate.
             

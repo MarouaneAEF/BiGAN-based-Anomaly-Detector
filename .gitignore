@@ -1,6 +1,5 @@
-__pychache__/
-./utils/__pychache__/
-!reconstruction/comparison
+__pychache__
+utils/__pychache__
+.vscode/
 
-cifar-10-batches-py/
-cifar-10-python.tar.gz
+

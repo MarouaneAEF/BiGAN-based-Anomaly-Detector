@@ -17,6 +17,6 @@ bigan = Trainer(dataloader, Generator, Encoder, Discriminator, device)
 epochs = 200
 for epoch in range(1, epochs + 1):
 
-    bigan.train(epoch)
+    bigan.training(epoch)
     bigan.test(epoch)
     

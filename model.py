@@ -94,41 +94,142 @@ class Discriminator(nn.Module):
             return output
 
 class Generator(nn.Module):
-    def __init__(self, z_dim=32):
+    def __init__(self, z_dim):
         super().__init__()
-        self.z_dim = z_dim
-        self.output_bias = nn.Parameter(torch.zeros(3, 32, 32), requires_grad=True)
 
-        self.genStack = nn.Sequential(
-            nn.ConvTranspose2d(z_dim, 256, 4, stride=1, bias=False),
+        self.z_dim = z_dim
+        self.output_bias = nn.Parameter(torch.zeros(1, 28, 28), requires_grad=True)
+        self.dec_stack = nn.Sequential(
+            nn.ConvTranspose2d(z_dim, 256, 5, stride=1, bias=False),
             nn.BatchNorm2d(256),
             nn.LeakyReLU(0.1, inplace=True),
 
-            nn.ConvTranspose2d(256, 128, 4, stride=2, bias=False),
+            nn.ConvTranspose2d(256, 128, 5, stride=2, bias=False),
             nn.BatchNorm2d(128),
             nn.LeakyReLU(0.1, inplace=True),
 
-             nn.ConvTranspose2d(128, 64, 4, stride=1, bias=False),
-             nn.BatchNorm2d(64),
-             nn.LeakyReLU(0.1, inplace=True),
+            nn.ConvTranspose2d(128, 64, 5, stride=1, bias=False),
+            nn.BatchNorm2d(64),
+            nn.LeakyReLU(0.1, inplace=True),
 
-             nn.ConvTranspose2d(64, 32, 4, stride=2, bias=False),
-             nn.BatchNorm2d(32),
-             nn.LeakyReLU(0.1, inplace=True),
+            nn.ConvTranspose2d(64, 32, 6, stride=1, bias=False),
+            nn.BatchNorm2d(32),
+            nn.LeakyReLU(0.1, inplace=True),
 
-             nn.ConvTranspose2d(32, 32, 5, stride=1, bias=False),
-             nn.BatchNorm2d(32),
-             nn.LeakyReLU(0.1, inplace=True),
+            nn.ConvTranspose2d(32, 32, 7, stride=1, bias=False),
+            nn.BatchNorm2d(32),
+            nn.LeakyReLU(0.1, inplace=True),
 
-             nn.Conv2d(32, 3, 1, stride=1, bias=True),
-            #  nn.Sigmoid()
-             
+            nn.LeakyReLU(0.1, inplace=True),
+
+
+            nn.Conv2d(32, 1, 1, stride=1, bias=True),
+
+            nn.Sigmoid()
+            )
+        
+        self.enc_stack = nn.Sequential(
+            nn.Conv2d(in_channels=1, 
+                      out_channels=32, 
+                      kernel_size=4, 
+                      stride=1, 
+                      padding=1, 
+                      bias=False),
+            nn.BatchNorm2d(32),
+            nn.LeakyReLU(0.1, inplace=True),
+
+            nn.Conv2d(32, 64, 3, stride=2, padding=1, bias=False),
+            nn.BatchNorm2d(64),
+            nn.LeakyReLU(0.1, inplace=True),
+
+            nn.Conv2d(64, 128, 3, stride=2, padding=1, bias=False),
+            nn.BatchNorm2d(128),
+            nn.LeakyReLU(0.1, inplace=True),
+
+            nn.Conv2d(128, 256, 3, stride=2, padding=1, bias=False),
+            nn.BatchNorm2d(256),
+            nn.LeakyReLU(0.1, inplace=True),
+
+            nn.Conv2d(256, 512, 3, stride=2, padding=1, bias=False),
+            nn.BatchNorm2d(512),
+            nn.LeakyReLU(0.1, inplace=True),
+
+            nn.Conv2d(512, 512, 3, stride=2, padding=1, bias=False),
+            nn.BatchNorm2d(512),
+            nn.LeakyReLU(0.1, inplace=True),
+          
+            nn.Conv2d(512, 2*z_dim, 1, stride=1, bias=True),
+           
+            # nn.Sigmoid()
         )
+
+    def decoding(self, z):
+        z = self.dec_stack(z)
+        # print(f"decoder shape: {z.shape}")
+        return torch.sigmoid(z + self.output_bias)
+    
+    def reparametrize(self, z):
+        mu, log_var = z[:, :self.z_dim], z[: ,self.z_dim:]
+        std = torch.exp(.5 * log_var)
+        epsilon = torch.randn_like(std)
+        sample = mu + epsilon*std
+        return sample
+    
+    def encoding(self, x):
+        x = self.enc_stack(x)
+        x = x.view(x.size(0), -1)
+        z_sample = self.reparametrize(x)
+        return z_sample
+    
+    def forward(self, x):
+        z = self.encoding(x)
+        x_z = self.decoding(z)
+
+        return x_z
+
+
+        
+class Decoder(nn.Module):
+    def __init__(self, z_dim=32):
+        super().__init__()
+        self.z_dim = z_dim
+        self.output_bias = nn.Parameter(torch.zeros(1, 28, 28), requires_grad=True)
+
+        self.genStack = nn.Sequential(
+            nn.ConvTranspose2d(z_dim, 256, 5, stride=1, bias=False),
+            nn.BatchNorm2d(256),
+            nn.LeakyReLU(0.1, inplace=True),
+
+            nn.ConvTranspose2d(256, 128, 5, stride=2, bias=False),
+            nn.BatchNorm2d(128),
+            nn.LeakyReLU(0.1, inplace=True),
+
+            nn.ConvTranspose2d(128, 64, 5, stride=1, bias=False),
+            nn.BatchNorm2d(64),
+            nn.LeakyReLU(0.1, inplace=True),
+
+            nn.ConvTranspose2d(64, 32, 6, stride=1, bias=False),
+            nn.BatchNorm2d(32),
+            nn.LeakyReLU(0.1, inplace=True),
+
+            nn.ConvTranspose2d(32, 32, 7, stride=1, bias=False),
+            nn.BatchNorm2d(32),
+            nn.LeakyReLU(0.1, inplace=True),
+
+            nn.LeakyReLU(0.1, inplace=True),
+
+
+            nn.Conv2d(32, 1, 1, stride=1, bias=True),
+
+            nn.Sigmoid()
+            )
 
     def forward(self, z):
 
         z = self.genStack(z)
+        print(f"decoder shape: {z.shape}")
         return torch.sigmoid(z + self.output_bias)
+
 
 class Encoder(nn.Module):
     def __init__(self, z_dim=32):
@@ -137,70 +238,50 @@ class Encoder(nn.Module):
         self.z_dim = z_dim
 
         self.encStack = nn.Sequential(
-            nn.Conv2d(1, 32, 3, stride=1, bias=False),
+            nn.Conv2d(in_channels=1, 
+                      out_channels=32, 
+                      kernel_size=4, 
+                      stride=1, 
+                      padding=1, 
+                      bias=False),
             nn.BatchNorm2d(32),
             nn.LeakyReLU(0.1, inplace=True),
 
-            nn.Conv2d(32, 64, 3, stride=1, bias=False),
+            nn.Conv2d(32, 64, 3, stride=2, padding=1, bias=False),
             nn.BatchNorm2d(64),
             nn.LeakyReLU(0.1, inplace=True),
 
-            nn.Conv2d(64, 128, 3, stride=1, bias=False),
+            nn.Conv2d(64, 128, 3, stride=2, padding=1, bias=False),
             nn.BatchNorm2d(128),
             nn.LeakyReLU(0.1, inplace=True),
 
-            nn.Conv2d(128, 256, 3, stride=1, bias=False),
+            nn.Conv2d(128, 256, 3, stride=2, padding=1, bias=False),
             nn.BatchNorm2d(256),
             nn.LeakyReLU(0.1, inplace=True),
 
-            nn.Conv2d(256, 512, 3, stride=1, bias=False),
+            nn.Conv2d(256, 512, 3, stride=2, padding=1, bias=False),
             nn.BatchNorm2d(512),
             nn.LeakyReLU(0.1, inplace=True),
 
-            nn.Conv2d(512, 2*512, 1, stride=1, bias=False),
-            nn.BatchNorm2d(2*512),
+            nn.Conv2d(512, 512, 3, stride=2, padding=1, bias=False),
+            nn.BatchNorm2d(512),
             nn.LeakyReLU(0.1, inplace=True),
           
-            # nn.Conv2d(512, 2*z_dim, 1, stride=1, bias=True),
+            nn.Conv2d(512, 2*z_dim, 1, stride=1, bias=True),
            
             # nn.Sigmoid()
-            
-
         )
-        self.mu_layer = nn.Linear(1024*2*2, z_dim)
-        self.logvar_layer = nn.Linear(1024*2*2, z_dim)
-
-    # def reparametrize(self, z):
-    #     # z = z.view(z.size(0), -1)
-    #     # print(f"z size: {z.size()}")
-    #     mu, log_var = z[:, :self.z_dim], z[:,self.z_dim:]
-    #     std = torch.exp(0.5* log_var)
-    #     epsilon = torch.randn_like(std)
         
-    #     print(f"mu size : {mu.size()}")
-    #     print(f"std size: {std.size()}")
-
-    #     sample = mu + epsilon*std
-    #     return sample 
-    def reparametrize(self, mu, logvar):
-        std = torch.exp(0.5*logvar)
-        eps = torch.randn_like(std)
-        return mu + eps*std
+    def reparametrize(self, z):
+        mu, log_var = z[:, :self.z_dim], z[: ,self.z_dim:]
+        std = torch.exp(.5 * log_var)
+        epsilon = torch.randn_like(std)
+        sample = mu + epsilon*std
+        return sample
 
     def forward(self, x):
         x = self.encStack(x)
-        x = x.view(-1, 1024*2*2)
-        mu = self.mu_layer(x)
-        logvar = self.logvar_layer(x)
-        z_sample = self.reparametrize(mu, logvar)
-        return z_sample, mu, logvar
-    
-    # def forward(self, x):
-
-    #     x = self.encStack(x)
-    #     z_sample = self.reparametrize(x)
-
-    #     return z_sample.view(x.size(0), self.z_dim, 1, 1)
-
-
+        x = x.view(x.size(0), -1)
+        z_sample = self.reparametrize(x)
+        return z_sample
 

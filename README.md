@@ -1,4 +1,4 @@
-"This repo is about anomaly detection on data consisting of images. The implementation is generalizable to any image dataset. The anomaly detector is based on BiGAN architecture, and the anomaly score is computed according to the following paper:
+This repo is about anomaly detection on data consisting of images. The implementation is generalizable to any image dataset. The anomaly detector is based on BiGAN architecture, and the anomaly score is computed according to the following paper:
 ```
 @article{DBLP:journals/corr/abs-1802-06222,
   author       = {Houssam Zenati and
@@ -22,7 +22,7 @@
 Two datasets were considered:
 
 - the training dataset : an Inlier dataset that contains only one category of digits (e.g., 0)
-the test dataset : an Outlier dataset that randomly samples MNIST images of other categories with a proportion of 20% taken as outliers.
+- the test dataset : an Outlier dataset that randomly samples MNIST images of other categories with a proportion of 20% taken as outliers.
 
 The training aims to indirectly learn the probability density of handwritten digit 0 given some latent variable lying in $z_dim$-dimensional space.
 

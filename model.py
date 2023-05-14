@@ -4,11 +4,9 @@ import torch.nn.functional as F
 
 
 class Discriminator(nn.Module):
-    def __init__(self, z_dim, wasserstein=False):
+    def __init__(self, z_dim):
 
         super().__init__()
-        self.was = wasserstein
-
         #  x graph stack 
         self.xStack = nn.Sequential(
 
@@ -34,9 +32,7 @@ class Discriminator(nn.Module):
             nn.Conv2d(256, 512, 3, stride=2, padding=1, bias=False),
             nn.BatchNorm2d(512),
             nn.LeakyReLU(0.1, inplace=True),
-            nn.Dropout2d(0.2)
-
-        )
+            nn.Dropout2d(0.2))
 
         # z graph stack 
         self.zStack = nn.Sequential(
@@ -46,12 +42,9 @@ class Discriminator(nn.Module):
 
             nn.Conv2d(512, 512, 1, stride=1, bias=False),
             nn.LeakyReLU(0.1, inplace=True),
-            nn.Dropout2d(0.2)
-
-        )
+            nn.Dropout2d(0.2))
 
         # joint (x,z) graph 
-
         self.xzStack = nn.Sequential(
             nn.Conv2d(1024, 1024, 1, stride=1, bias=False),
             nn.LeakyReLU(0.1, inplace=True),
@@ -61,9 +54,7 @@ class Discriminator(nn.Module):
             nn.LeakyReLU(0.1, inplace=True),
             nn.Dropout2d(0.2),
 
-            nn.Conv2d(1024, 1, 1, stride=1, bias=False)
-
-        )
+            nn.Conv2d(1024, 1, 1, stride=1, bias=False))
 
     def x_graph(self, x):
 
@@ -86,15 +77,11 @@ class Discriminator(nn.Module):
         z = self.zStack(z)
         xz = torch.cat((x,z), dim=1)
         output = self.xzStack(xz)
-
-        if self.was:
-            return output
-        else:
-            output =  torch.sigmoid(output) 
-            return output
+        output =  torch.sigmoid(output) 
+        return output
 
 class Generator(nn.Module):
-    def __init__(self, z_dim):
+def __init__(self, z_dim):
         super().__init__()
 
         self.z_dim = z_dim
@@ -124,9 +111,6 @@ class Generator(nn.Module):
             
             nn.ConvTranspose2d(32, 1, 1, stride=1, bias=True),
             nn.LeakyReLU(0.1, inplace=True),
-            
-            
-            nn.Sigmoid()
             )
         
         self.enc_stack = nn.Sequential(
@@ -159,9 +143,9 @@ class Generator(nn.Module):
             nn.BatchNorm2d(512),
             nn.LeakyReLU(0.1, inplace=True),
           
-            nn.Conv2d(512, 2*z_dim, 1, stride=1, bias=True),
+            nn.Conv2d(512, 2*self.z_dim, 1, stride=1, bias=True),
            
-            # nn.Sigmoid()
+            nn.Sigmoid()
         )
 
     def decoding(self, z):
@@ -184,7 +168,7 @@ class Generator(nn.Module):
     
     def forward(self, x):
         z = self.encoding(x)
-        print(f"z shape : {z.shape}")
+        # print(f"z shape : {z.shape}")
         z = z.view(-1, self.z_dim, 1, 1)
         x_z = self.decoding(z)
 

@@ -1,18 +1,18 @@
 import torch 
 
 from train import Trainer
-from model import Discriminator, Encoder, Generator
-from dataloader import get_cifar_10
+from model import Discriminator, Generator
+from dataloader import get_datasets
 
 
-
+train_data, _  = get_datasets()
 
 
 device = torch.device("cuda")
 
-dataloader = get_cifar_10(batch_size=64)
 
-bigan = Trainer(dataloader, Generator, Encoder, Discriminator, device)
+
+bigan = Trainer(train_data, Generator, Discriminator, device)
 
 epochs = 200
 for epoch in range(1, epochs + 1):

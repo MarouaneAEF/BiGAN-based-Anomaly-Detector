@@ -12,26 +12,26 @@ class Discriminator(nn.Module):
         #  x graph stack 
         self.xStack = nn.Sequential(
 
-            nn.Conv2d(3, 32, 5, stride=1, bias=False),
+            nn.Conv2d(1, 32, 3, stride=2, padding=1, bias=False),
             nn.LeakyReLU(0.1, inplace=True),
             nn.Dropout2d(0.2),
-
-            nn.Conv2d(32, 64, 4, stride=2, bias=False),
+            
+            nn.Conv2d(32, 64, 3, stride=2, padding=1,  bias=False),
             nn.BatchNorm2d(64),
             nn.LeakyReLU(0.1, inplace=True),
             nn.Dropout2d(0.2),
 
-            nn.Conv2d(64, 128, 4, stride=1, bias=False),
+            nn.Conv2d(64, 128, 3, stride=2, padding=1, bias=False),
             nn.BatchNorm2d(128),
             nn.LeakyReLU(0.1, inplace=True),
             nn.Dropout2d(0.2),
 
-            nn.Conv2d(128, 256, 4, stride=2, bias=False),
+            nn.Conv2d(128, 256, 3, stride=2, padding=1, bias=False),
             nn.BatchNorm2d(256),
             nn.LeakyReLU(0.1, inplace=True),
             nn.Dropout2d(0.2),
 
-            nn.Conv2d(256, 512, 4, stride=1, bias=False),
+            nn.Conv2d(256, 512, 3, stride=2, padding=1, bias=False),
             nn.BatchNorm2d(512),
             nn.LeakyReLU(0.1, inplace=True),
             nn.Dropout2d(0.2)
@@ -183,9 +183,11 @@ class Generator(nn.Module):
     
     def forward(self, x):
         z = self.encoding(x)
+        print(f"z shape : {z.shape}")
+        z = z.view(-1, self.z_dim, 1, 1)
         x_z = self.decoding(z)
 
-        return x_z
+        return x_z, z
 
 
         
@@ -219,7 +221,7 @@ class Decoder(nn.Module):
             nn.LeakyReLU(0.1, inplace=True),
 
 
-            nn.Conv2d(32, 1, 1, stride=1, bias=True),
+            nn.ConvTranspose2d(32, 1, 1, stride=1, bias=True),
 
             nn.Sigmoid()
             )

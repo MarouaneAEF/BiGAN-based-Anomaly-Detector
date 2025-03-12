@@ -27,6 +27,8 @@ def parse_args():
     parser.add_argument('--use_spectral_norm', action='store_true', help='Use spectral normalization')
     
     # Dataset parameters
+    parser.add_argument('--dataset_type', type=str, default='mnist', choices=['mnist', 'fashion_mnist', 'cifar10'], 
+                        help='Dataset to use: mnist, fashion_mnist, cifar10')
     parser.add_argument('--inlier', type=int, default=0, help='Which digit to use as inlier class (0-9)')
     parser.add_argument('--outlier_portion', type=float, default=0.2, help='Portion of outliers in test set')
     
@@ -71,6 +73,8 @@ def main():
     train_data, test_data = get_datasets(
         inlier=args.inlier, 
         batch_size=args.batch_size,
+        dataset_type=args.dataset_type,
+        image_size=args.image_size,
         outlier_portion=args.outlier_portion
     )
     

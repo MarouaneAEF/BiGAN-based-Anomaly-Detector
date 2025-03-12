@@ -57,33 +57,36 @@ python main.py --dataset_type cifar10 --inlier 0 --input_channels 3 --image_size
 ### Full Parameter List
 
 ```
-Basic parameters:
-  --epochs INT         Number of training epochs (default: 200)
-  --batch_size INT     Batch size for training (default: 64)
-  --latent_dim INT     Dimension of latent space (default: 128)
-  --lr FLOAT           Learning rate (default: 2e-4)
-
-Model parameters:
-  --image_size INT     Size of input images (default: 28)
-  --input_channels INT Number of input channels (1 for grayscale, 3 for RGB) (default: 1)
-  --feature_maps_gen INT  Base number of feature maps in generator (default: 32)
-  --feature_maps_disc INT Base number of feature maps in discriminator (default: 32)
-  --dropout_rate FLOAT    Dropout rate for regularization (default: 0.2)
-  --use_tanh           Use tanh activation in generator output
-  --use_spectral_norm  Use spectral normalization for stability
-
-Dataset parameters:
-  --inlier INT         Which digit/class to use as inlier (0-9 for MNIST) (default: 0)
-  --outlier_portion FLOAT  Portion of outliers in test set (default: 0.2)
-  --dataset_type STR   Dataset to use: mnist, fashion_mnist, cifar10 (default: mnist)
-
-Output parameters:
-  --save_dir STR       Directory to save results (default: ./results)
-  --save_interval INT  Epoch interval for saving models (default: 10)
-
-Hardware parameters:
-  --use_mps            Use MPS (Apple Silicon GPU) if available
-  --use_cpu            Force CPU usage even if GPU is available
+options:
+  -h, --help            show this help message and exit
+  --epochs EPOCHS       Number of training epochs
+  --batch_size BATCH_SIZE
+                        Batch size for training
+  --latent_dim LATENT_DIM
+                        Dimension of latent space
+  --lr LR               Learning rate
+  --image_size IMAGE_SIZE
+                        Size of input images (assumed square)
+  --input_channels INPUT_CHANNELS
+                        Number of input channels (1 for grayscale, 3 for RGB)
+  --feature_maps_gen FEATURE_MAPS_GEN
+                        Base number of feature maps in generator
+  --feature_maps_disc FEATURE_MAPS_DISC
+                        Base number of feature maps in discriminator
+  --dropout_rate DROPOUT_RATE
+                        Dropout rate for regularization
+  --use_tanh            Use tanh activation in generator output
+  --use_spectral_norm   Use spectral normalization
+  --dataset_type {mnist,fashion_mnist,cifar10}
+                        Dataset to use: mnist, fashion_mnist, cifar10
+  --inlier INLIER       Which digit to use as inlier class (0-9)
+  --outlier_portion OUTLIER_PORTION
+                        Portion of outliers in test set
+  --save_dir SAVE_DIR   Directory to save results
+  --save_interval SAVE_INTERVAL
+                        Epoch interval for saving models
+  --use_mps             Use MPS (Apple Silicon GPU) if available
+  --use_cpu             Force CPU usage even if GPU is available
 ```
 
 ## Model Architecture

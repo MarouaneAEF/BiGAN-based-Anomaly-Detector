@@ -122,6 +122,17 @@ The training process generates several visualizations in the `results` directory
 
 You can create GIF animations to visualize how your model's reconstructions and generated samples evolve throughout the training process. The included `create_animation.py` script makes this easy.
 
+### Animation: Learning the Data Distribution
+
+The animations created by this script provide a powerful visual demonstration of how the BiGAN progressively learns the underlying probability distribution of the data:
+
+- **Reconstruction Quality**: As training progresses, you can observe how the model's ability to reconstruct normal samples improves, showing its increasing understanding of the inlier class distribution.
+- **Feature Learning**: The evolution of reconstructed images reveals which features the model learns first (typically coarse structures) and which require more training (fine details, textures).
+- **Manifold Exploration**: Generated samples show how the model explores and maps the latent space to the data manifold, gradually producing more realistic examples.
+- **Convergence Behavior**: Animations help identify if/when the model reaches convergence or if it experiences mode collapse or instability.
+
+These visualizations are particularly valuable for anomaly detection, as they demonstrate the model's growing ability to represent normal data, which directly relates to its capability to identify anomalies as deviations from the learned distribution.
+
 ### Creating a Basic Animation
 
 ```bash
@@ -143,6 +154,7 @@ python create_animation.py --mode multi
 - Single directory mode shows evolution of a specific type of output
 - Multi-panel mode shows synchronized view of different outputs at each epoch
 - Adjustable frame rate and resolution
+- Custom panel combinations to focus on specific aspects of learning
 
 For more options and examples, see `animation_readme.md`.
 

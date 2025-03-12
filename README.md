@@ -118,6 +118,34 @@ The training process generates several visualizations in the `results` directory
 - `stats/`: Contains loss curves and other statistics
 - `models/`: Contains model checkpoints
 
+## Visualizing Training Evolution with Animations
+
+You can create GIF animations to visualize how your model's reconstructions and generated samples evolve throughout the training process. The included `create_animation.py` script makes this easy.
+
+### Creating a Basic Animation
+
+```bash
+# Create animation of reconstruction comparisons
+python create_animation.py --mode single --image_dir ./results/reconstruction/comparison
+```
+
+### Multi-Panel Animations
+
+You can also create a side-by-side animation showing multiple aspects of training:
+
+```bash
+# Create multi-panel animation showing reconstructions, fake samples, and true samples
+python create_animation.py --mode multi
+```
+
+### Animation Options
+
+- Single directory mode shows evolution of a specific type of output
+- Multi-panel mode shows synchronized view of different outputs at each epoch
+- Adjustable frame rate and resolution
+
+For more options and examples, see `animation_readme.md`.
+
 ## Customization
 
 You can customize the model by editing:

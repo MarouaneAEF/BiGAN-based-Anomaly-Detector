@@ -133,11 +133,23 @@ The animations created by this script provide a powerful visual demonstration of
 
 These visualizations are particularly valuable for anomaly detection, as they demonstrate the model's growing ability to represent normal data, which directly relates to its capability to identify anomalies as deviations from the learned distribution.
 
+### Example Animations
+
+Below are example animations showing the model's learning process (replace these with your own animations after training):
+
+#### Reconstruction Comparison Animation
+![Reconstruction Animation](./results/comparison_animation.gif)
+*Animation showing how reconstruction quality improves over training epochs*
+
+#### Multi-Panel Animation
+![Multi-Panel Animation](./results/multi_animation.gif)
+*Side-by-side animation of reconstructions, generated samples, and original samples*
+
 ### Creating a Basic Animation
 
 ```bash
 # Create animation of reconstruction comparisons
-python create_animation.py --mode single --image_dir ./results/reconstruction/comparison
+python create_animation.py --mode single --image_dir ./results/reconstruction/comparison --output ./results/comparison_animation.gif
 ```
 
 ### Multi-Panel Animations
@@ -146,7 +158,7 @@ You can also create a side-by-side animation showing multiple aspects of trainin
 
 ```bash
 # Create multi-panel animation showing reconstructions, fake samples, and true samples
-python create_animation.py --mode multi
+python create_animation.py --mode multi --output ./results/multi_animation.gif
 ```
 
 ### Animation Options
@@ -157,6 +169,14 @@ python create_animation.py --mode multi
 - Custom panel combinations to focus on specific aspects of learning
 
 For more options and examples, see `animation_readme.md`.
+
+### Adding Animations to Your README
+
+After generating your animations, you can embed them in this README by:
+
+1. Making sure the GIF files are committed to your repository
+2. Using Markdown image syntax: `![Description](path/to/animation.gif)`
+3. Adding appropriate captions to explain what the animations show
 
 ## Customization
 
